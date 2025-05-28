@@ -20,10 +20,12 @@
 
 ## 기술 스택
 
-- Java 11+
-- Spring Boot 2.x
-- MySQL / MariaDB
+- Java 17
+- Spring Boot 3.5.0
+- Spring Security
+- MySQL
 - Spring Data JPA
+- QueryDSL
 - SSE(Server-Sent Events)
 
 ## 참고 문서
@@ -31,15 +33,3 @@
 - [ERD 설계](https://velog.io/@no-oneho/%EC%9D%BC%EC%B9%9C-IlChin-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EA%B0%9C%EB%B0%9C%EA%B8%B0-2-ERD%EC%84%A4%EA%B3%84)
 - [API 명세서](링크 넣기)
 - [사용 가이드](링크 넣기)
-
-## 참여 방법
-
-1. 레포지토리 클론  
-2. 개발 환경 세팅  
-3. 기능 추가 또는 버그 수정  
-4. PR 보내기
-
----
-
-궁금한 점이나 개선할 부분이 있으면 언제든 연락 주세요!  
-같이 멋진 시스템 만들어가봅시다!
