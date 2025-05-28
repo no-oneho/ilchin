@@ -1,0 +1,26 @@
+spring:
+  jpa:
+    generate-ddl: 'false'
+    database: mysql
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        use_sql_comments: true
+        format_sql: true
+        show_sql: false
+    hibernate:
+      ddl-auto: none
+    open-in-view: true
+  thymeleaf:
+    cache: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/ilchin
+    password: root
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  devtools:
+    livereload:
+      enabled: true
