@@ -2,6 +2,7 @@ package org.groupware.ilchin.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.groupware.ilchin.dto.user.request.SignUp;
 
 @Getter
 @NoArgsConstructor
@@ -26,5 +27,15 @@ public class UserProfile {
 
     @Column(name = "phone", length = 50)
     private String phone;
+
+    @Builder
+    public static UserProfile SignUpToUserProfile(Long userId, SignUp signUp) {
+        return UserProfile.builder()
+                .userId(userId)
+                .departmentId(signUp.getDepartment())
+                .fullName(signUp.getFullName())
+                .phone(signUp.getPhone())
+                .build();
+    }
 
 }
