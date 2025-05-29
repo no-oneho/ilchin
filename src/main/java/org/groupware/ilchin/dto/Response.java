@@ -17,7 +17,6 @@ public class Response<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
-    @Builder
     public Response(String message, Integer code, T data) {
         this.message = message;
         this.code = code;
