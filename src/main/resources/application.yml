@@ -24,3 +24,6 @@ spring:
   devtools:
     livereload:
       enabled: true
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true

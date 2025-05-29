@@ -2,6 +2,7 @@ package org.groupware.ilchin.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.groupware.ilchin.dto.user.request.SignUp;
 
 import java.time.LocalDateTime;
 
@@ -34,5 +35,17 @@ public class User {
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
+
+    @Builder
+    public static User SignUpToUser(SignUp signUp, String passwordEnc) {
+        return User.builder()
+                .username(signUp.getUsername())
+                .email(signUp.getEmail())
+                .password(passwordEnc)
+                .role(signUp.getRole())
+                .createdAt(LocalDateTime.now())
+                .isDeleted(false)
+                .build();
+    }
 
 }
