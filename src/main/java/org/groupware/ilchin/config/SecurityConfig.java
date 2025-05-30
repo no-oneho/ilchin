@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new TokenExceptionHandleFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new TokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         authorizeRequests -> authorizeRequests
