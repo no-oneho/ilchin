@@ -23,4 +23,8 @@ public class Response<T> {
         this.data = data;
     }
 
+    public Response(int value, String message) {
+        this.message = message;
+        this.code = value;
+    }
 }
