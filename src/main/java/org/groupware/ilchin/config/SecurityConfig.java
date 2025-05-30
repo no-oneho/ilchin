@@ -1,5 +1,7 @@
 package org.groupware.ilchin.config;
 
+import lombok.RequiredArgsConstructor;
+import org.groupware.ilchin.security.CustomAccessDeniedHandler;
 import org.groupware.ilchin.security.TokenExceptionHandleFilter;
 import org.groupware.ilchin.security.TokenFilter;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +22,10 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     CorsConfigurationSource corsConfigurationSource() {
         return request -> {
@@ -54,7 +59,9 @@ public class SecurityConfig {
                         httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer
                                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                 )
-                .exceptionHandling((exceptionConfig) -> {});
+                .exceptionHandling((exceptionConfig) -> {
+                    exceptionConfig.accessDeniedHandler(accessDeniedHandler);
+                });
 
         return http.build();
     }
