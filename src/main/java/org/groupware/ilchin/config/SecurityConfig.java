@@ -2,6 +2,7 @@ package org.groupware.ilchin.config;
 
 import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.security.CustomAccessDeniedHandler;
+import org.groupware.ilchin.security.CustomAuthenticationEntryPoint;
 import org.groupware.ilchin.security.TokenExceptionHandleFilter;
 import org.groupware.ilchin.security.TokenFilter;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +14,6 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -26,6 +26,7 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     CorsConfigurationSource corsConfigurationSource() {
         return request -> {
@@ -61,6 +62,7 @@ public class SecurityConfig {
                 )
                 .exceptionHandling((exceptionConfig) -> {
                     exceptionConfig.accessDeniedHandler(accessDeniedHandler);
+                    exceptionConfig.authenticationEntryPoint(authenticationEntryPoint);
                 });
 
         return http.build();
