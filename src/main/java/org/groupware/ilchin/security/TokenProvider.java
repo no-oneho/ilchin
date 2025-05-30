@@ -21,7 +21,7 @@ public class TokenProvider {
         SECRET_KEY = secretKey;
     }
 
-    public String createToken(User user) {
+    public static String createToken(User user) {
         Date expiryDate = Date.from(
                 Instant.now()
                         .plus(1, ChronoUnit.DAYS)
@@ -38,7 +38,7 @@ public class TokenProvider {
                 .compact();
     }
 
-    public Claims extractClaims(String token) {
+    private static Claims extractClaims(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
