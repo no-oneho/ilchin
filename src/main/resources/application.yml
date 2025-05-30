@@ -27,3 +27,4 @@ spring:
 springdoc:
   swagger-ui:
     disable-swagger-default-url: true
+secret-key-source: ${SECRET_KEY_SOURCE}
