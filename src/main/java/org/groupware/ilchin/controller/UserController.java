@@ -19,7 +19,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/sign-up")
+    @PostMapping("")
     public Response<LoginResp> signUp(@RequestBody SignUp signUp) {
         return Api.success(200, "success", userService.createUser(signUp));
     }
