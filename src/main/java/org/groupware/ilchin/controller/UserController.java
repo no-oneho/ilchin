@@ -5,11 +5,10 @@ import org.groupware.ilchin.dto.Response;
 import org.groupware.ilchin.dto.user.request.LoginReq;
 import org.groupware.ilchin.dto.user.request.SignUp;
 import org.groupware.ilchin.dto.user.response.LoginResp;
+import org.groupware.ilchin.dto.user.response.UserProfileResp;
+import org.groupware.ilchin.security.Auth;
 import org.groupware.ilchin.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import utils.Api;
 
 @RestController
@@ -27,6 +26,12 @@ public class UserController {
     @PostMapping("/login")
     public Response<LoginResp> login(@RequestBody LoginReq loginReq) {
         return Api.success(200, "success", userService.login(loginReq));
+    }
+
+    @Auth
+    @GetMapping
+    public Response<UserProfileResp> getCurrentUserProfile() {
+        return Api.success(200, "내 정보 조회 완료", userService.getCurrentUserProfile());
     }
 
 }

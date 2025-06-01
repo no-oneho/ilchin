@@ -16,8 +16,9 @@ public class UserProfile {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     @Column(name = "department_id", nullable = false)
     private Long departmentId;
@@ -29,9 +30,9 @@ public class UserProfile {
     private String phone;
 
     @Builder
-    public static UserProfile SignUpToUserProfile(Long userId, SignUp signUp) {
+    public static UserProfile SignUpToUserProfile(User user, SignUp signUp) {
         return UserProfile.builder()
-                .userId(userId)
+                .user(user)
                 .departmentId(signUp.getDepartment())
                 .fullName(signUp.getFullName())
                 .phone(signUp.getPhone())

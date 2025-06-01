@@ -5,12 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.user.request.LoginReq;
 import org.groupware.ilchin.dto.user.request.SignUp;
 import org.groupware.ilchin.dto.user.response.LoginResp;
+import org.groupware.ilchin.dto.user.response.UserProfileResp;
 import org.groupware.ilchin.entity.User;
 import org.groupware.ilchin.entity.UserProfile;
 import org.groupware.ilchin.exception.CustomException;
 import org.groupware.ilchin.exception.UserException;
 import org.groupware.ilchin.repository.UserProfileRepository;
 import org.groupware.ilchin.repository.UserRepository;
+import org.groupware.ilchin.security.AuthHolder;
 import org.groupware.ilchin.security.TokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class UserService {
         checkPasswordConfirm(signUp.getPassword(), signUp.getConfirmPassword());
 
         User user = userRepository.save(User.SignUpToUser(signUp, passwordEncoder.encode(signUp.getPassword())));
-        userProfileRepository.save(UserProfile.SignUpToUserProfile(user.getId(), signUp));
+        userProfileRepository.save(UserProfile.SignUpToUserProfile(user, signUp));
         String token = TokenProvider.createToken(user);
         return LoginResp.from(user, token);
     }
@@ -37,7 +39,7 @@ public class UserService {
     @Transactional
     public LoginResp login(LoginReq login) {
         User user = userRepository.findByUsername(login.getUsername())
-                .orElseThrow(()->new CustomException(UserException.BAD_REQUEST_LOGIN));
+                .orElseThrow(() -> new CustomException(UserException.BAD_REQUEST_LOGIN));
 
         if (!passwordEncoder.matches(login.getPassword(), user.getPassword())) {
             throw new CustomException(UserException.BAD_REQUEST_LOGIN);
@@ -45,6 +47,12 @@ public class UserService {
 
         String token = TokenProvider.createToken(user);
         return LoginResp.from(user, token);
+    }
+
+
+    public UserProfileResp getCurrentUserProfile() {
+        User user = getCurrentUser();
+        return userRepository.findUserProfileByUser(user);
     }
 
 
@@ -59,4 +67,14 @@ public class UserService {
             throw new CustomException(UserException.MISS_MATCH_PASSWORD);
         }
     }
+
+    private User getCurrentUser() {
+        Long userId = AuthHolder.getUserId();
+        if (userId == null) {
+            throw new CustomException(UserException.HANDLE_ACCESS_DENIED);
+        }
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(UserException.HANDLE_ACCESS_DENIED));
+    }
+
 }
