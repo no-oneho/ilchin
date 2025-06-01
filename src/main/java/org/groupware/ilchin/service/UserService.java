@@ -24,13 +24,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public Void createUser(SignUp signUp) {
+    public LoginResp createUser(SignUp signUp) {
         checkUserExist(signUp.getUsername());
         checkPasswordConfirm(signUp.getPassword(), signUp.getConfirmPassword());
 
         User user = userRepository.save(User.SignUpToUser(signUp, passwordEncoder.encode(signUp.getPassword())));
         userProfileRepository.save(UserProfile.SignUpToUserProfile(user.getId(), signUp));
-        return null;
+        String token = TokenProvider.createToken(user);
+        return LoginResp.from(user, token);
     }
 
     @Transactional
