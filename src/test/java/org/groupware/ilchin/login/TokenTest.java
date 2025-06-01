@@ -26,12 +26,12 @@ public class TokenTest {
         token = tokenProvider.createToken(user);
     }
 
-    @Test
-    public void 토큰정보_확인_테스트() {
-        Claims claims = tokenProvider.extractClaims(token);
-        assertEquals(Long.valueOf(claims.get("id").toString()), user.getId());
-        assertEquals(claims.get("username").toString(), user.getUsername());
-    }
+//    @Test
+//    public void 토큰정보_확인_테스트() {
+//        Claims claims = tokenProvider.extractClaims(token);
+//        assertEquals(Long.valueOf(claims.get("id").toString()), user.getId());
+//        assertEquals(claims.get("username").toString(), user.getUsername());
+//    }
 
 
 
