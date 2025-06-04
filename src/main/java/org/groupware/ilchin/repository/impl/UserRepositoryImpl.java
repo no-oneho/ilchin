@@ -32,15 +32,6 @@ public class UserRepositoryImpl implements UserCustomRepository {
     }
 
     @Override
-    public boolean confirmPassword(Long userId, String encode) {
-        return jpaQueryFactory
-                .selectFrom(user)
-                .where(user.id.eq(userId)
-                        .and(user.password.eq(encode)))
-                .fetchFirst() == null;
-    }
-
-    @Override
     public UserProfileResp findUserProfileByUser(User currentUser) {
         return jpaQueryFactory
                 .select(Projections.constructor(UserProfileResp.class,
