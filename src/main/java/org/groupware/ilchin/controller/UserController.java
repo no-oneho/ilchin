@@ -2,12 +2,14 @@ package org.groupware.ilchin.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.Response;
+import org.groupware.ilchin.dto.SearchPageResponse;
 import org.groupware.ilchin.dto.user.request.LoginReq;
 import org.groupware.ilchin.dto.user.request.PatchPasswordReq;
 import org.groupware.ilchin.dto.user.request.PatchUserReq;
 import org.groupware.ilchin.dto.user.request.SignUp;
 import org.groupware.ilchin.dto.user.response.LoginResp;
 import org.groupware.ilchin.dto.user.response.UserProfileResp;
+import org.groupware.ilchin.dto.user.response.UserSearchResp;
 import org.groupware.ilchin.security.Auth;
 import org.groupware.ilchin.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +33,7 @@ public class UserController {
     }
 
     @Auth
-    @GetMapping
+    @GetMapping("me")
     public Response<UserProfileResp> getCurrentUserProfile() {
         return Api.success(200, "내 정보 조회 완료", userService.getCurrentUserProfile());
     }
@@ -59,6 +61,24 @@ public class UserController {
     @DeleteMapping("{id}")
     public Response<String> deleteTargetUserProfile(@PathVariable Long id) {
         return Api.success(200, "유저 삭제 완료", userService.deleteTargetUser(id));
+    }
+
+    @Auth
+    @GetMapping
+    public Response<SearchPageResponse<UserSearchResp>> searchUser(
+            @RequestParam(required = false) String searchKeyword,
+            @RequestParam(required = false) Long departmentId,
+            @RequestParam Integer pageNumber,
+            @RequestParam Integer pageSize,
+            @RequestParam(required = false) String sortType) {
+        return Api.success(200, "유저 리스트 조회 완료", userService.searchUser(
+                searchKeyword,
+                departmentId,
+                pageNumber,
+                pageSize,
+                sortType
+        ));
+
     }
 
 }

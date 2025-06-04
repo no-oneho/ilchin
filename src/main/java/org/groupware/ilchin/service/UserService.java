@@ -2,12 +2,14 @@ package org.groupware.ilchin.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.groupware.ilchin.dto.SearchPageResponse;
 import org.groupware.ilchin.dto.user.request.LoginReq;
 import org.groupware.ilchin.dto.user.request.PatchPasswordReq;
 import org.groupware.ilchin.dto.user.request.PatchUserReq;
 import org.groupware.ilchin.dto.user.request.SignUp;
 import org.groupware.ilchin.dto.user.response.LoginResp;
 import org.groupware.ilchin.dto.user.response.UserProfileResp;
+import org.groupware.ilchin.dto.user.response.UserSearchResp;
 import org.groupware.ilchin.entity.Department;
 import org.groupware.ilchin.entity.User;
 import org.groupware.ilchin.entity.UserProfile;
@@ -19,9 +21,13 @@ import org.groupware.ilchin.repository.UserProfileRepository;
 import org.groupware.ilchin.repository.UserRepository;
 import org.groupware.ilchin.security.AuthHolder;
 import org.groupware.ilchin.security.TokenProvider;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import utils.Api;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -122,6 +128,18 @@ public class UserService {
         userRepository.save(targetUser);
         return "사용자 제거 완료";
 
+    }
+
+
+    public SearchPageResponse<UserSearchResp> searchUser(String searchKeyword, Long departmentId,
+                                                         Integer pageNumber, Integer pageSize,
+                                                         String sortType) {
+        Pageable pageable = PageRequest.ofSize(pageSize).withPage(pageNumber);
+        List<UserSearchResp> userSearchRespList = userRepository.searchUserWithPage(
+                searchKeyword, departmentId, sortType, pageable
+        );
+
+        return SearchPageResponse.of(0L, 0L, pageNumber+1, pageSize, userSearchRespList);
     }
 
     private static void checkUserAuthentication(User currentUser, UserProfile currentUserProfile, UserProfile targetUserProfile) {
