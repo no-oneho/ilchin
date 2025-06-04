@@ -55,4 +55,10 @@ public class UserController {
 
     }
 
+    @Auth
+    @DeleteMapping("{id}")
+    public Response<String> deleteTargetUserProfile(@PathVariable Long id) {
+        return Api.success(200, "유저 삭제 완료", userService.deleteTargetUser(id));
+    }
+
 }

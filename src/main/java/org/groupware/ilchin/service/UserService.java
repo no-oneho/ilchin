@@ -50,6 +50,10 @@ public class UserService {
         User user = userRepository.findByUsername(login.getUsername())
                 .orElseThrow(() -> new CustomException(UserException.BAD_REQUEST_LOGIN));
 
+        if (user.getIsDeleted()) {
+            throw new CustomException(UserException.BAD_REQUEST_LOGIN);
+        }
+
         if (!passwordEncoder.matches(login.getPassword(), user.getPassword())) {
             throw new CustomException(UserException.BAD_REQUEST_LOGIN);
         }
@@ -90,6 +94,36 @@ public class UserService {
         UserProfile targetUserProfile = userProfileRepository.findByUser(targetUser)
                 .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
 
+        checkUserAuthentication(currentUser, currentUserProfile, targetUserProfile);
+        return userRepository.findUserProfileByUser(targetUser);
+    }
+
+
+    public String patchCurrentUserPassword(PatchPasswordReq patchPasswordReq) {
+        User user = getCurrentUser();
+        checkPasswordConfirm(patchPasswordReq.password(), patchPasswordReq.confirmPassword());
+        user.changePassword(passwordEncoder.encode(patchPasswordReq.password()));
+        return "패스워드가 변경되었으니 재 로그인 해주세요";
+    }
+
+    public String deleteTargetUser(Long id) {
+        User currentUser = getCurrentUser();
+        UserProfile currentUserProfile = userProfileRepository.findByUser(currentUser)
+                .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
+        User targetUser = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
+        UserProfile targetUserProfile = userProfileRepository.findByUser(targetUser)
+                .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
+
+        checkUserAuthentication(currentUser, currentUserProfile, targetUserProfile);
+
+        targetUser.deleteUser();
+        userRepository.save(targetUser);
+        return "사용자 제거 완료";
+
+    }
+
+    private static void checkUserAuthentication(User currentUser, UserProfile currentUserProfile, UserProfile targetUserProfile) {
         boolean isAdmin = currentUser.getRole().equals("ADMIN");
 
         if (!isAdmin) {
@@ -104,15 +138,6 @@ public class UserService {
                 throw new CustomException(UserException.FORBIDDEN_ACCESS);
             }
         }
-        return userRepository.findUserProfileByUser(targetUser);
-    }
-
-
-    public String patchCurrentUserPassword(PatchPasswordReq patchPasswordReq) {
-        User user = getCurrentUser();
-        checkPasswordConfirm(patchPasswordReq.password(), patchPasswordReq.confirmPassword());
-        user.changePassword(passwordEncoder.encode(patchPasswordReq.password()));
-        return "패스워드가 변경되었으니 재 로그인 해주세요";
     }
 
 
@@ -136,5 +161,6 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(UserException.HANDLE_ACCESS_DENIED));
     }
+
 
 }

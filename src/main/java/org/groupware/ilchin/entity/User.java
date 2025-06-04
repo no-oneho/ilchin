@@ -56,4 +56,8 @@ public class User {
         this.password = password;
     }
 
+    public void deleteUser() {
+        this.isDeleted = true;
+    }
+
 }
