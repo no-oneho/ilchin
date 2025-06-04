@@ -68,9 +68,9 @@ public class UserService {
         return userRepository.findUserProfileByUser(user);
     }
 
-
+    @Transactional
     public UserProfileResp patchCurrentUserProfile(PatchUserReq patchUserReq) {
-        if(!Api.areFieldsNotNullOrEmpty(patchUserReq, "email", "fullName", "phoneNumber")) {
+        if (!Api.areFieldsNotNullOrEmpty(patchUserReq, "email", "fullName", "phoneNumber")) {
             throw new CustomException(UserException.BAD_REQUEST_PATCH);
         }
         User user = getCurrentUser();
@@ -98,7 +98,7 @@ public class UserService {
         return userRepository.findUserProfileByUser(targetUser);
     }
 
-
+    @Transactional
     public String patchCurrentUserPassword(PatchPasswordReq patchPasswordReq) {
         User user = getCurrentUser();
         checkPasswordConfirm(patchPasswordReq.password(), patchPasswordReq.confirmPassword());
@@ -106,6 +106,7 @@ public class UserService {
         return "패스워드가 변경되었으니 재 로그인 해주세요";
     }
 
+    @Transactional
     public String deleteTargetUser(Long id) {
         User currentUser = getCurrentUser();
         UserProfile currentUserProfile = userProfileRepository.findByUser(currentUser)
