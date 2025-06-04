@@ -20,8 +20,9 @@ public class UserProfile {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @Column(name = "department_id", nullable = false)
-    private Long departmentId;
+    @JoinColumn(name = "department_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Department department;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;

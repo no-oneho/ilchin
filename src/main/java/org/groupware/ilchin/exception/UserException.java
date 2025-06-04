@@ -17,7 +17,7 @@ public enum UserException implements Error {
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     BAD_REQUEST_PATCH(HttpStatus.BAD_REQUEST, "빈 칸을 채워주세요."),
 
-    ;
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "권한이 부족합니다.");
 
     private final HttpStatus status;
     private final String message;

@@ -41,4 +41,10 @@ public class UserController {
         return Api.success(200, "내 정보 수정 완료", userService.patchCurrentUserProfile(patchUserReq));
     }
 
+    @Auth
+    @GetMapping("{id}")
+    public Response<UserProfileResp> getTargetUserProfile(@PathVariable Long id) {
+        return Api.success(200, "정보 조회 완료", userService.getTargetUserProfile(id));
+    }
+
 }

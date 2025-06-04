@@ -74,6 +74,32 @@ public class UserService {
 
     }
 
+    public UserProfileResp getTargetUserProfile(Long id) {
+        User currentUser = getCurrentUser();
+        UserProfile currentUserProfile = userProfileRepository.findByUser(currentUser)
+                .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
+        User targetUser = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
+        UserProfile targetUserProfile = userProfileRepository.findByUser(targetUser)
+                .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
+
+        boolean isAdmin = currentUser.getRole().equals("ADMIN");
+
+        if (!isAdmin) {
+            // 관리자가 아니면, 부서 매니저인지 확인
+            Long currentDeptId = currentUserProfile.getDepartment().getId();
+            Long targetDeptId = targetUserProfile.getDepartment().getId();
+            Long currentUserId = currentUser.getId();
+            Long targetUserDeptManagerId = currentUserProfile.getDepartment().getUserId();
+
+            // 같은 부서이고, 현재 유저가 그 부서 관리자이면 통과
+            if (!(currentDeptId.equals(targetDeptId) && currentUserId.equals(targetUserDeptManagerId))) {
+                throw new CustomException(UserException.FORBIDDEN_ACCESS);
+            }
+        }
+        return userRepository.findUserProfileByUser(targetUser);
+    }
+
 
     private void checkUserExist(String username) {
         if (!userRepository.isUsernameAvailable(username)) {
@@ -95,5 +121,6 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(UserException.HANDLE_ACCESS_DENIED));
     }
+
 
 }
