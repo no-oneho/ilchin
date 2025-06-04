@@ -3,6 +3,7 @@ package org.groupware.ilchin.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.user.request.LoginReq;
+import org.groupware.ilchin.dto.user.request.PatchPasswordReq;
 import org.groupware.ilchin.dto.user.request.PatchUserReq;
 import org.groupware.ilchin.dto.user.request.SignUp;
 import org.groupware.ilchin.dto.user.response.LoginResp;
@@ -107,6 +108,14 @@ public class UserService {
     }
 
 
+    public String patchCurrentUserPassword(PatchPasswordReq patchPasswordReq) {
+        User user = getCurrentUser();
+        checkPasswordConfirm(patchPasswordReq.password(), patchPasswordReq.confirmPassword());
+        user.changePassword(passwordEncoder.encode(patchPasswordReq.password()));
+        return "패스워드가 변경되었으니 재 로그인 해주세요";
+    }
+
+
     private void checkUserExist(String username) {
         if (!userRepository.isUsernameAvailable(username)) {
             throw new CustomException(UserException.ALREADY_EXISTS);
@@ -127,6 +136,5 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(UserException.HANDLE_ACCESS_DENIED));
     }
-
 
 }

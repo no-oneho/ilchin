@@ -52,4 +52,8 @@ public class User {
         this.email = email;
     }
 
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
 }

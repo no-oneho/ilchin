@@ -3,6 +3,7 @@ package org.groupware.ilchin.controller;
 import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.Response;
 import org.groupware.ilchin.dto.user.request.LoginReq;
+import org.groupware.ilchin.dto.user.request.PatchPasswordReq;
 import org.groupware.ilchin.dto.user.request.PatchUserReq;
 import org.groupware.ilchin.dto.user.request.SignUp;
 import org.groupware.ilchin.dto.user.response.LoginResp;
@@ -45,6 +46,13 @@ public class UserController {
     @GetMapping("{id}")
     public Response<UserProfileResp> getTargetUserProfile(@PathVariable Long id) {
         return Api.success(200, "정보 조회 완료", userService.getTargetUserProfile(id));
+    }
+
+    @Auth
+    @PatchMapping("password")
+    public Response<String> patchCurrentUserPassword(@RequestBody PatchPasswordReq patchPasswordReq) {
+        return Api.success(200, "패스워드 변경 완료", userService.patchCurrentUserPassword(patchPasswordReq));
+
     }
 
 }
