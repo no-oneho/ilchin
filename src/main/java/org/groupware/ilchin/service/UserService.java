@@ -3,6 +3,7 @@ package org.groupware.ilchin.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.user.request.LoginReq;
+import org.groupware.ilchin.dto.user.request.PatchUserReq;
 import org.groupware.ilchin.dto.user.request.SignUp;
 import org.groupware.ilchin.dto.user.response.LoginResp;
 import org.groupware.ilchin.dto.user.response.UserProfileResp;
@@ -16,6 +17,7 @@ import org.groupware.ilchin.security.AuthHolder;
 import org.groupware.ilchin.security.TokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import utils.Api;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +55,23 @@ public class UserService {
     public UserProfileResp getCurrentUserProfile() {
         User user = getCurrentUser();
         return userRepository.findUserProfileByUser(user);
+    }
+
+
+    public UserProfileResp patchCurrentUserProfile(PatchUserReq patchUserReq) {
+        if(!Api.areFieldsNotNullOrEmpty(patchUserReq, "email", "fullName", "phoneNumber")) {
+            throw new CustomException(UserException.BAD_REQUEST_PATCH);
+        }
+        User user = getCurrentUser();
+        UserProfile userProfile = userProfileRepository.findByUser(user)
+                .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
+        user.updateEmail(patchUserReq.email());
+        userProfile.update(patchUserReq.fullName(), patchUserReq.phoneNumber());
+        userProfileRepository.save(userProfile);
+        userRepository.save(user);
+
+        return new UserProfileResp(user.getUsername(), user.getEmail(), user.getRole(), userProfile.getFullName(), userProfile.getPhone());
+
     }
 
 

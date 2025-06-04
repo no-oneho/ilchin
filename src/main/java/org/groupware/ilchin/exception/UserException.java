@@ -14,6 +14,8 @@ public enum UserException implements Error {
     BAD_REQUEST_LOGIN(HttpStatus.BAD_REQUEST, "로그인 정보가 잘못되었습니다."),
     CANT_ACCESS(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
     HANDLE_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
+    BAD_REQUEST_PATCH(HttpStatus.BAD_REQUEST, "빈 칸을 채워주세요."),
 
     ;
 

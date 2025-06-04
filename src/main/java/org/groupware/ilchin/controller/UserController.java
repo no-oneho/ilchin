@@ -3,6 +3,7 @@ package org.groupware.ilchin.controller;
 import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.Response;
 import org.groupware.ilchin.dto.user.request.LoginReq;
+import org.groupware.ilchin.dto.user.request.PatchUserReq;
 import org.groupware.ilchin.dto.user.request.SignUp;
 import org.groupware.ilchin.dto.user.response.LoginResp;
 import org.groupware.ilchin.dto.user.response.UserProfileResp;
@@ -32,6 +33,12 @@ public class UserController {
     @GetMapping
     public Response<UserProfileResp> getCurrentUserProfile() {
         return Api.success(200, "내 정보 조회 완료", userService.getCurrentUserProfile());
+    }
+
+    @Auth
+    @PatchMapping
+    public Response<UserProfileResp> patchCurrentUserProfile(@RequestBody PatchUserReq patchUserReq) {
+        return Api.success(200, "내 정보 수정 완료", userService.patchCurrentUserProfile(patchUserReq));
     }
 
 }
