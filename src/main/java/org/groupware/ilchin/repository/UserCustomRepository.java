@@ -11,8 +11,6 @@ public interface UserCustomRepository {
 
     boolean isUsernameAvailable(String username);
 
-    boolean confirmPassword(Long userId, String encode);
-
     UserProfileResp findUserProfileByUser(User user);
 
     List<UserSearchResp> searchUserWithPage(String searchKeyword, Long departmentId, String sortType, Pageable pageable);
