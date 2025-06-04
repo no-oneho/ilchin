@@ -48,4 +48,8 @@ public class User {
                 .build();
     }
 
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
 }

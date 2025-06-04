@@ -39,4 +39,9 @@ public class UserProfile {
                 .build();
     }
 
+    public void update(String fullName, String phone) {
+        this.fullName = fullName;
+        this.phone = phone;
+    }
+
 }
