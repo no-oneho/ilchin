@@ -31,10 +31,10 @@ public class UserProfile {
     private String phone;
 
     @Builder
-    public static UserProfile SignUpToUserProfile(User user, SignUp signUp) {
+    public static UserProfile SignUpToUserProfile(User user, SignUp signUp, Department department) {
         return UserProfile.builder()
                 .user(user)
-                .departmentId(signUp.getDepartment())
+                .department(department)
                 .fullName(signUp.getFullName())
                 .phone(signUp.getPhone())
                 .build();

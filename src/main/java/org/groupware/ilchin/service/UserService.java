@@ -7,10 +7,13 @@ import org.groupware.ilchin.dto.user.request.PatchUserReq;
 import org.groupware.ilchin.dto.user.request.SignUp;
 import org.groupware.ilchin.dto.user.response.LoginResp;
 import org.groupware.ilchin.dto.user.response.UserProfileResp;
+import org.groupware.ilchin.entity.Department;
 import org.groupware.ilchin.entity.User;
 import org.groupware.ilchin.entity.UserProfile;
 import org.groupware.ilchin.exception.CustomException;
+import org.groupware.ilchin.exception.DepartmentException;
 import org.groupware.ilchin.exception.UserException;
+import org.groupware.ilchin.repository.DepartmentRepository;
 import org.groupware.ilchin.repository.UserProfileRepository;
 import org.groupware.ilchin.repository.UserRepository;
 import org.groupware.ilchin.security.AuthHolder;
@@ -25,6 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
+    private final DepartmentRepository departmentRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -33,7 +37,9 @@ public class UserService {
         checkPasswordConfirm(signUp.getPassword(), signUp.getConfirmPassword());
 
         User user = userRepository.save(User.SignUpToUser(signUp, passwordEncoder.encode(signUp.getPassword())));
-        userProfileRepository.save(UserProfile.SignUpToUserProfile(user, signUp));
+        Department department = departmentRepository.findById(signUp.getDepartment())
+                .orElseThrow(() -> new CustomException(DepartmentException.NOT_FOUND_DEPARTMENT));
+        userProfileRepository.save(UserProfile.SignUpToUserProfile(user, signUp, department));
         String token = TokenProvider.createToken(user);
         return LoginResp.from(user, token);
     }
