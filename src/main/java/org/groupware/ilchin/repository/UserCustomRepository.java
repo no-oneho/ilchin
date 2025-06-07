@@ -13,5 +13,7 @@ public interface UserCustomRepository {
 
     UserProfileResp findUserProfileByUser(User user);
 
-    List<UserSearchResp> searchUserWithPage(String searchKeyword, Long departmentId, String sortType, Pageable pageable);
+    List<UserSearchResp> searchUserWithPage(String searchKeyword, Long departmentId, User currentUser, String sortType, Pageable pageable);
+
+    Long searchUserCount(String searchKeyword, Long departmentId, User user);
 }

@@ -137,12 +137,17 @@ public class UserService {
     public SearchPageResponse<UserSearchResp> searchUser(String searchKeyword, Long departmentId,
                                                          Integer pageNumber, Integer pageSize,
                                                          String sortType) {
+        User user = getCurrentUser();
         Pageable pageable = PageRequest.ofSize(pageSize).withPage(pageNumber);
         List<UserSearchResp> userSearchRespList = userRepository.searchUserWithPage(
-                searchKeyword, departmentId, sortType, pageable
+                searchKeyword, departmentId, user, sortType, pageable
         );
 
-        return SearchPageResponse.of(0L, 0L, pageNumber+1, pageSize, userSearchRespList);
+        Long totalCount = userRepository.searchUserCount(searchKeyword, departmentId, user);
+        Long totalPage = (long)Math.ceil((double)totalCount / pageSize);
+
+
+        return SearchPageResponse.of(totalCount, totalPage, pageNumber + 1, pageSize, userSearchRespList);
     }
 
     private static void checkUserAuthentication(User currentUser, UserProfile currentUserProfile, UserProfile targetUserProfile) {

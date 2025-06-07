@@ -1,12 +1,15 @@
 package org.groupware.ilchin.repository.impl;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.user.response.UserProfileResp;
 import org.groupware.ilchin.dto.user.response.UserSearchResp;
 import org.groupware.ilchin.entity.User;
+import org.groupware.ilchin.entity.UserProfile;
 import org.groupware.ilchin.repository.UserCustomRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -49,22 +52,13 @@ public class UserRepositoryImpl implements UserCustomRepository {
     }
 
     @Override
-    public List<UserSearchResp> searchUserWithPage(String searchKeyword, Long departmentId, String sortType, Pageable pageable) {
-        BooleanBuilder builder = new BooleanBuilder();
-        if (searchKeyword != null) {
-            String keywordPattern = "%" + searchKeyword + "%";
+    public List<UserSearchResp> searchUserWithPage(String searchKeyword, Long departmentId, User currentUser, String sortType, Pageable pageable) {
+        BooleanBuilder builder = getUserSearchBuilder(searchKeyword, departmentId, currentUser);
 
-            BooleanBuilder searchBuilder = new BooleanBuilder();
-            searchBuilder.and(userProfile.fullName.like(keywordPattern));
-            builder.and(searchBuilder);
+        OrderSpecifier orderSpecifier = new OrderSpecifier(Order.DESC, user.id);
+        if (sortType != null) {
+            orderSpecifier = createOrderSpecifier(sortType);
         }
-
-        if (departmentId != null) {
-            BooleanBuilder searchBuilder = new BooleanBuilder();
-            searchBuilder.and(department.id.eq(departmentId));
-            builder.and(searchBuilder);
-        }
-
 
         return jpaQueryFactory
                 .select(Projections.constructor(UserSearchResp.class,
@@ -84,6 +78,66 @@ public class UserRepositoryImpl implements UserCustomRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .groupBy(user)
+                .orderBy(orderSpecifier)
                 .fetch();
     }
+
+    @Override
+    public Long searchUserCount(String searchKeyword, Long departmentId, User currentUser) {
+
+        BooleanBuilder builder = getUserSearchBuilder(searchKeyword, departmentId, currentUser);
+
+
+        return jpaQueryFactory
+                .select(user.count())
+                .from(user)
+                .leftJoin(userProfile).on(user.eq(userProfile.user))
+                .leftJoin(department).on(department.eq(userProfile.department))
+                .where(
+                        builder
+                )
+                .fetchOne();
+    }
+
+    private BooleanBuilder getUserSearchBuilder(String searchKeyword, Long departmentId, User currentUser) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if (searchKeyword != null) {
+            String keywordPattern = "%" + searchKeyword + "%";
+
+            BooleanBuilder searchBuilder = new BooleanBuilder();
+            searchBuilder.and(userProfile.fullName.like(keywordPattern));
+            builder.and(searchBuilder);
+        }
+
+        if (departmentId != null) {
+            BooleanBuilder searchBuilder = new BooleanBuilder();
+            searchBuilder.and(department.id.eq(departmentId));
+            builder.and(searchBuilder);
+        }
+
+        if (!currentUser.getRole().equals("ADMIN")) {
+
+            UserProfile currentUserProfile = jpaQueryFactory
+                    .selectFrom(userProfile)
+                    .join(user).on(userProfile.user.eq(currentUser))
+                    .fetchOne();
+
+         BooleanBuilder searchBuilder = new BooleanBuilder();
+         if (currentUserProfile != null) {
+             searchBuilder.and(department.eq(currentUserProfile.getDepartment()));
+         }
+         builder.and(searchBuilder);
+        }
+        return builder;
+    }
+
+    private OrderSpecifier createOrderSpecifier(String sortType) {
+        return switch (sortType) {
+            case "fullName" -> new OrderSpecifier<>(Order.DESC, userProfile.fullName);
+            case "department" -> new OrderSpecifier<>(Order.DESC, department.id);
+            default -> new OrderSpecifier<>(Order.DESC, user.id);
+
+        };
+    }
+
 }

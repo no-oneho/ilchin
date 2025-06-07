@@ -17,7 +17,7 @@ public class UserProfile {
     private Long id;
 
     @JoinColumn(name = "user_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private User user;
 
     @JoinColumn(name = "department_id", nullable = false)

@@ -5,6 +5,7 @@ import lombok.*;
 import org.groupware.ilchin.dto.user.request.SignUp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -35,6 +36,7 @@ public class User {
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
+
 
     @Builder
     public static User SignUpToUser(SignUp signUp, String passwordEnc) {
