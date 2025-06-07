@@ -16,11 +16,13 @@ public class UserProfile {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    private User user;
 
-    @Column(name = "department_id", nullable = false)
-    private Long departmentId;
+    @JoinColumn(name = "department_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Department department;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
@@ -29,13 +31,18 @@ public class UserProfile {
     private String phone;
 
     @Builder
-    public static UserProfile SignUpToUserProfile(Long userId, SignUp signUp) {
+    public static UserProfile SignUpToUserProfile(User user, SignUp signUp, Department department) {
         return UserProfile.builder()
-                .userId(userId)
-                .departmentId(signUp.getDepartment())
+                .user(user)
+                .department(department)
                 .fullName(signUp.getFullName())
                 .phone(signUp.getPhone())
                 .build();
+    }
+
+    public void update(String fullName, String phone) {
+        this.fullName = fullName;
+        this.phone = phone;
     }
 
 }

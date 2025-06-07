@@ -1,13 +1,24 @@
 package org.groupware.ilchin.repository.impl;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.groupware.ilchin.entity.QUser;
+import org.groupware.ilchin.dto.user.response.UserProfileResp;
+import org.groupware.ilchin.dto.user.response.UserSearchResp;
 import org.groupware.ilchin.entity.User;
+import org.groupware.ilchin.entity.UserProfile;
 import org.groupware.ilchin.repository.UserCustomRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+import static org.groupware.ilchin.entity.QDepartment.department;
 import static org.groupware.ilchin.entity.QUser.user;
+import static org.groupware.ilchin.entity.QUserProfile.userProfile;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,11 +35,109 @@ public class UserRepositoryImpl implements UserCustomRepository {
     }
 
     @Override
-    public boolean confirmPassword(Long userId, String encode) {
+    public UserProfileResp findUserProfileByUser(User currentUser) {
         return jpaQueryFactory
-                .selectFrom(user)
-                .where(user.id.eq(userId)
-                        .and(user.password.eq(encode)))
-                .fetchFirst() == null;
+                .select(Projections.constructor(UserProfileResp.class,
+                        user.username,
+                        user.email,
+                        user.role,
+                        userProfile.fullName,
+                        userProfile.phone))
+                .from(user)
+                .join(userProfile).on(user.eq(userProfile.user))
+                .where(
+                        user.eq(currentUser)
+                )
+                .fetchFirst();
     }
+
+    @Override
+    public List<UserSearchResp> searchUserWithPage(String searchKeyword, Long departmentId, User currentUser, String sortType, Pageable pageable) {
+        BooleanBuilder builder = getUserSearchBuilder(searchKeyword, departmentId, currentUser);
+
+        OrderSpecifier orderSpecifier = new OrderSpecifier(Order.DESC, user.id);
+        if (sortType != null) {
+            orderSpecifier = createOrderSpecifier(sortType);
+        }
+
+        return jpaQueryFactory
+                .select(Projections.constructor(UserSearchResp.class,
+                        user.id,
+                        user.email,
+                        user.createdAt,
+                        userProfile.fullName,
+                        userProfile.phone,
+                        userProfile.department.id
+                ))
+                .from(user)
+                .leftJoin(userProfile).on(user.eq(userProfile.user))
+                .leftJoin(department).on(department.eq(userProfile.department))
+                .where(
+                        builder
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .groupBy(user)
+                .orderBy(orderSpecifier)
+                .fetch();
+    }
+
+    @Override
+    public Long searchUserCount(String searchKeyword, Long departmentId, User currentUser) {
+
+        BooleanBuilder builder = getUserSearchBuilder(searchKeyword, departmentId, currentUser);
+
+
+        return jpaQueryFactory
+                .select(user.count())
+                .from(user)
+                .leftJoin(userProfile).on(user.eq(userProfile.user))
+                .leftJoin(department).on(department.eq(userProfile.department))
+                .where(
+                        builder
+                )
+                .fetchOne();
+    }
+
+    private BooleanBuilder getUserSearchBuilder(String searchKeyword, Long departmentId, User currentUser) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if (searchKeyword != null) {
+            String keywordPattern = "%" + searchKeyword + "%";
+
+            BooleanBuilder searchBuilder = new BooleanBuilder();
+            searchBuilder.and(userProfile.fullName.like(keywordPattern));
+            builder.and(searchBuilder);
+        }
+
+        if (departmentId != null) {
+            BooleanBuilder searchBuilder = new BooleanBuilder();
+            searchBuilder.and(department.id.eq(departmentId));
+            builder.and(searchBuilder);
+        }
+
+        if (!currentUser.getRole().equals("ADMIN")) {
+
+            UserProfile currentUserProfile = jpaQueryFactory
+                    .selectFrom(userProfile)
+                    .join(user).on(userProfile.user.eq(currentUser))
+                    .fetchOne();
+
+         BooleanBuilder searchBuilder = new BooleanBuilder();
+         if (currentUserProfile != null) {
+             searchBuilder.and(department.eq(currentUserProfile.getDepartment()));
+         }
+         builder.and(searchBuilder);
+        }
+        return builder;
+    }
+
+    private OrderSpecifier createOrderSpecifier(String sortType) {
+        return switch (sortType) {
+            case "fullName" -> new OrderSpecifier<>(Order.DESC, userProfile.fullName);
+            case "department" -> new OrderSpecifier<>(Order.DESC, department.id);
+            default -> new OrderSpecifier<>(Order.DESC, user.id);
+
+        };
+    }
+
 }
