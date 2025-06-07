@@ -1,6 +1,8 @@
 package utils;
 
 import org.groupware.ilchin.dto.Response;
+import org.groupware.ilchin.exception.CustomException;
+import org.groupware.ilchin.exception.UtilException;
 import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Field;
@@ -37,7 +39,7 @@ public class Api {
 
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new CustomException(UtilException.FIELD_MISSING);
         }
         return true;
     }
