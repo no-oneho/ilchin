@@ -107,6 +107,9 @@ public class UserService {
     @Transactional
     public String patchCurrentUserPassword(PatchPasswordReq patchPasswordReq) {
         User user = getCurrentUser();
+        if (!passwordEncoder.matches(patchPasswordReq.currentPassword(), user.getPassword())) {
+            throw new CustomException(UserException.BAD_REQUEST_LOGIN);
+        }
         checkPasswordConfirm(patchPasswordReq.password(), patchPasswordReq.confirmPassword());
         user.changePassword(passwordEncoder.encode(patchPasswordReq.password()));
         return "패스워드가 변경되었으니 재 로그인 해주세요";
