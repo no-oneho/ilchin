@@ -1,4 +1,4 @@
-package utils;
+package org.groupware.ilchin.utils;
 
 import org.groupware.ilchin.dto.Response;
 import org.groupware.ilchin.exception.CustomException;

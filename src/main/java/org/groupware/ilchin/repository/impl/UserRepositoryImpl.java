@@ -73,7 +73,7 @@ public class UserRepositoryImpl implements UserCustomRepository {
                 .leftJoin(userProfile).on(user.eq(userProfile.user))
                 .leftJoin(department).on(department.eq(userProfile.department))
                 .where(
-                        builder
+                        builder.and(user.isDeleted.eq(false))
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -94,7 +94,7 @@ public class UserRepositoryImpl implements UserCustomRepository {
                 .leftJoin(userProfile).on(user.eq(userProfile.user))
                 .leftJoin(department).on(department.eq(userProfile.department))
                 .where(
-                        builder
+                        builder.and(user.isDeleted.eq(false))
                 )
                 .fetchOne();
     }

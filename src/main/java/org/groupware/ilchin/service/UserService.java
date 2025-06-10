@@ -19,13 +19,13 @@ import org.groupware.ilchin.exception.UserException;
 import org.groupware.ilchin.repository.DepartmentRepository;
 import org.groupware.ilchin.repository.UserProfileRepository;
 import org.groupware.ilchin.repository.UserRepository;
-import org.groupware.ilchin.security.AuthHolder;
 import org.groupware.ilchin.security.TokenProvider;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import utils.Api;
+import org.groupware.ilchin.utils.Api;
+import org.groupware.ilchin.utils.UserUtils;
 
 import java.util.List;
 
@@ -37,6 +37,7 @@ public class UserService {
     private final UserProfileRepository userProfileRepository;
     private final DepartmentRepository departmentRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserUtils userUtils;
 
     @Transactional
     public LoginResp createUser(SignUp signUp) {
@@ -70,7 +71,7 @@ public class UserService {
 
 
     public UserProfileResp getCurrentUserProfile() {
-        User user = getCurrentUser();
+        User user = userUtils.getCurrentUser();
         return userRepository.findUserProfileByUser(user);
     }
 
@@ -79,7 +80,7 @@ public class UserService {
         if (!Api.areFieldsNotNullOrEmpty(patchUserReq, "email", "fullName", "phoneNumber")) {
             throw new CustomException(UserException.BAD_REQUEST_PATCH);
         }
-        User user = getCurrentUser();
+        User user = userUtils.getCurrentUser();
         UserProfile userProfile = userProfileRepository.findByUser(user)
                 .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
         user.updateEmail(patchUserReq.email());
@@ -92,7 +93,7 @@ public class UserService {
     }
 
     public UserProfileResp getTargetUserProfile(Long id) {
-        User currentUser = getCurrentUser();
+        User currentUser = userUtils.getCurrentUser();
         UserProfile currentUserProfile = userProfileRepository.findByUser(currentUser)
                 .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
         User targetUser = userRepository.findById(id)
@@ -106,7 +107,7 @@ public class UserService {
 
     @Transactional
     public String patchCurrentUserPassword(PatchPasswordReq patchPasswordReq) {
-        User user = getCurrentUser();
+        User user = userUtils.getCurrentUser();
         if (!passwordEncoder.matches(patchPasswordReq.currentPassword(), user.getPassword())) {
             throw new CustomException(UserException.BAD_REQUEST_LOGIN);
         }
@@ -117,7 +118,7 @@ public class UserService {
 
     @Transactional
     public String deleteTargetUser(Long id) {
-        User currentUser = getCurrentUser();
+        User currentUser = userUtils.getCurrentUser();
         UserProfile currentUserProfile = userProfileRepository.findByUser(currentUser)
                 .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
         User targetUser = userRepository.findById(id)
@@ -137,7 +138,7 @@ public class UserService {
     public SearchPageResponse<UserSearchResp> searchUser(String searchKeyword, Long departmentId,
                                                          Integer pageNumber, Integer pageSize,
                                                          String sortType) {
-        User user = getCurrentUser();
+        User user = userUtils.getCurrentUser();
         Pageable pageable = PageRequest.ofSize(pageSize).withPage(pageNumber);
         List<UserSearchResp> userSearchRespList = userRepository.searchUserWithPage(
                 searchKeyword, departmentId, user, sortType, pageable
@@ -178,15 +179,6 @@ public class UserService {
         if (!password.equals(confirmPassword)) {
             throw new CustomException(UserException.MISS_MATCH_PASSWORD);
         }
-    }
-
-    private User getCurrentUser() {
-        Long userId = AuthHolder.getUserId();
-        if (userId == null) {
-            throw new CustomException(UserException.HANDLE_ACCESS_DENIED);
-        }
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(UserException.HANDLE_ACCESS_DENIED));
     }
 
 

@@ -12,7 +12,7 @@ import org.groupware.ilchin.dto.Response;
 import org.groupware.ilchin.exception.UserException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.filter.OncePerRequestFilter;
-import utils.Error;
+import org.groupware.ilchin.utils.Error;
 
 import java.io.IOException;
 import java.io.PrintWriter;

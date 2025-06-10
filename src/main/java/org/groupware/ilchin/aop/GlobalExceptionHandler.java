@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import utils.Api;
+import org.groupware.ilchin.utils.Api;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
