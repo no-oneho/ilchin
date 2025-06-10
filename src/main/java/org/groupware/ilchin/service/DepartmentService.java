@@ -8,6 +8,7 @@ import org.groupware.ilchin.dto.department.response.DepartmentResp;
 import org.groupware.ilchin.entity.Department;
 import org.groupware.ilchin.entity.User;
 import org.groupware.ilchin.exception.CustomException;
+import org.groupware.ilchin.exception.DepartmentException;
 import org.groupware.ilchin.exception.UserException;
 import org.groupware.ilchin.repository.DepartmentRepository;
 import org.groupware.ilchin.repository.UserProfileRepository;
@@ -56,5 +57,10 @@ public class DepartmentService {
 
         return SearchPageResponse.of(totalCount, totalPage, pageNumber + 1, pageSize, departmentRespList);
 
+    }
+
+    public DepartmentResp getDepartment(Long id) {
+        return DepartmentResp.entityToResp(departmentRepository.findById(id)
+                .orElseThrow(() -> new CustomException(DepartmentException.NOT_FOUND_DEPARTMENT)));
     }
 }

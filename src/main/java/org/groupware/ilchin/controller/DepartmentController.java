@@ -34,4 +34,9 @@ public class DepartmentController {
         return Api.success(200, "부서 리스트 조회 완료", departmentService.searchDepartment(searchKeyword, departmentId, pageNumber, pageSize));
     }
 
+    @GetMapping({"{id}"})
+    public Response<DepartmentResp> getDepartment(@PathVariable Long id) {
+        return Api.success(200, "부서 조회 완료", departmentService.getDepartment(id));
+    }
+
 }
