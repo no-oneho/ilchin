@@ -2,6 +2,7 @@ package org.groupware.ilchin.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.groupware.ilchin.dto.department.request.CreateReq;
 
 @Getter
 @NoArgsConstructor
@@ -22,13 +23,25 @@ public class Department {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     @Column(name = "tel", length = 50)
     private String tel;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
+
+    @Builder
+    public static Department create(CreateReq createReq, User user) {
+        return Department.builder()
+                .name(createReq.name())
+                .description(createReq.description())
+                .user(user)
+                .tel(createReq.tel())
+                .isDeleted(false)
+                .build();
+    }
 
 }

@@ -158,7 +158,7 @@ public class UserService {
             Long currentDeptId = currentUserProfile.getDepartment().getId();
             Long targetDeptId = targetUserProfile.getDepartment().getId();
             Long currentUserId = currentUser.getId();
-            Long targetUserDeptManagerId = currentUserProfile.getDepartment().getUserId();
+            Long targetUserDeptManagerId = currentUserProfile.getDepartment().getUser().getId();
 
             // 같은 부서이고, 현재 유저가 그 부서 관리자이면 통과
             if (!(currentDeptId.equals(targetDeptId) && currentUserId.equals(targetUserDeptManagerId))) {
