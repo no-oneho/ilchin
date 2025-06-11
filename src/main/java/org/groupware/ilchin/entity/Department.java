@@ -46,8 +46,12 @@ public class Department {
     }
 
     public void updateDepartment(PatchReq patchReq) {
-        this.name = patchReq.name();
-        this.description = patchReq.description();
+        if (patchReq.name() != null && !patchReq.name().isBlank()) {
+            this.name = patchReq.name();
+        }
+        if (patchReq.description() != null && !patchReq.description().isBlank()) {
+            this.description = patchReq.description();
+        }
     }
 
     public void updateManager(User user) {
