@@ -14,7 +14,6 @@ public record DepartmentResp(
 
 ) {
 
-    @Builder
     public static DepartmentResp entityToResp(Department entity) {
         return DepartmentResp.builder()
                 .id(entity.getId())
