@@ -3,6 +3,7 @@ package org.groupware.ilchin.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.groupware.ilchin.dto.department.request.CreateReq;
+import org.groupware.ilchin.dto.department.request.PatchReq;
 
 @Getter
 @NoArgsConstructor
@@ -42,6 +43,11 @@ public class Department {
                 .tel(createReq.tel())
                 .isDeleted(false)
                 .build();
+    }
+
+    public void updateDepartment(PatchReq patchReq) {
+        this.name = patchReq.name();
+        this.description = patchReq.description();
     }
 
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.Response;
 import org.groupware.ilchin.dto.SearchPageResponse;
 import org.groupware.ilchin.dto.department.request.CreateReq;
+import org.groupware.ilchin.dto.department.request.PatchReq;
 import org.groupware.ilchin.dto.department.response.DepartmentResp;
 import org.groupware.ilchin.security.Auth;
 import org.groupware.ilchin.service.DepartmentService;
@@ -41,9 +42,9 @@ public class DepartmentController {
     }
 
     @Auth
-    @PatchMapping({"id"})
-    public Response<DepartmentResp> updateDepartment(@PathVariable Long id, @RequestBody CreateReq createReq) {
-        return Api.success(200, "부서 수정 완료", departmentService.updateDepartment(id, createReq));
+    @PatchMapping({"{id}"})
+    public Response<DepartmentResp> updateDepartment(@PathVariable Long id, @RequestBody PatchReq patchReq) {
+        return Api.success(200, "부서 수정 완료", departmentService.updateDepartment(id, patchReq));
     }
 
 }

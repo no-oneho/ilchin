@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.SearchPageResponse;
 import org.groupware.ilchin.dto.department.request.CreateReq;
+import org.groupware.ilchin.dto.department.request.PatchReq;
 import org.groupware.ilchin.dto.department.response.DepartmentResp;
 import org.groupware.ilchin.entity.Department;
 import org.groupware.ilchin.entity.User;
@@ -65,7 +66,8 @@ public class DepartmentService {
                 .orElseThrow(() -> new CustomException(DepartmentException.NOT_FOUND_DEPARTMENT)));
     }
 
-    public DepartmentResp updateDepartment(Long id, CreateReq createReq) {
+    @Transactional
+    public DepartmentResp updateDepartment(Long id, PatchReq patchReq) {
         User currentUser = userUtils.getCurrentUser();
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(DepartmentException.NOT_FOUND_DEPARTMENT));
@@ -74,9 +76,8 @@ public class DepartmentService {
                 throw new CustomException(UserException.FORBIDDEN_ACCESS);
             }
         }
+        department.updateDepartment(patchReq);
 
-
-
-        return null;
+        return DepartmentResp.entityToResp(departmentRepository.save(department));
     }
 }
