@@ -21,8 +21,6 @@ import org.springframework.stereotype.Service;
 import org.groupware.ilchin.utils.UserUtils;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +28,6 @@ public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
-    private final UserProfileRepository userProfileRepository;
     private final UserUtils userUtils;
 
     @Transactional
