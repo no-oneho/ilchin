@@ -24,7 +24,8 @@ public class DepartmentRepositoryImpl implements DepartmentCustomRepository {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (!(searchKeyword == null || searchKeyword.isEmpty())) {
-            builder.and(department.name.like("%" + searchKeyword + "%"));
+            String escapedKeyword = searchKeyword.replace("%", "\\%").replace("_", "\\_");
+            builder.and(department.name.like("%" + escapedKeyword + "%"));
         }
 
         if (departmentId != null) {
@@ -46,8 +47,9 @@ public class DepartmentRepositoryImpl implements DepartmentCustomRepository {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (searchKeyword == null || searchKeyword.isEmpty()) {
-            builder.and(department.name.like("%" + searchKeyword + "%"));
+        if (!(searchKeyword == null || searchKeyword.isEmpty())) {
+            String escapedKeyword = searchKeyword.replace("%", "\\%").replace("_", "\\_");
+            builder.and(department.name.like("%" + escapedKeyword + "%"));
         }
 
         if (departmentId != null) {
