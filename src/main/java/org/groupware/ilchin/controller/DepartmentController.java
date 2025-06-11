@@ -50,13 +50,13 @@ public class DepartmentController {
 
     @Auth
     @PatchMapping("{id}/manager")
-    public Response<DepartmentResp> updateDepartmentManager(@PathVariable Long id, @RequestBody UpdateManagerReq updateManagerReq) {
+    public Response<DepartmentResp> updateDepartmentManager(@PathVariable Long id, @RequestBody @Valid UpdateManagerReq updateManagerReq) {
         return Api.success(200, "부서 매니저 변경 완료", departmentService.updateDepartmentManager(id, updateManagerReq));
     }
 
     @Auth
     @DeleteMapping("{id}")
-    public Response<String> deleteDepartment(@PathVariable Long id) {
+    public Response<String> deleteDepartment(@PathVariable @Valid Long id) {
         return Api.success(200, "부서 제거 완료", departmentService.deleteDepartment(id));
     }
 
