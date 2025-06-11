@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.groupware.ilchin.utils.UserUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,5 +63,20 @@ public class DepartmentService {
     public DepartmentResp getDepartment(Long id) {
         return DepartmentResp.entityToResp(departmentRepository.findById(id)
                 .orElseThrow(() -> new CustomException(DepartmentException.NOT_FOUND_DEPARTMENT)));
+    }
+
+    public DepartmentResp updateDepartment(Long id, CreateReq createReq) {
+        User currentUser = userUtils.getCurrentUser();
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new CustomException(DepartmentException.NOT_FOUND_DEPARTMENT));
+        if (!currentUser.getRole().equals("ADMIN")) {
+            if (!department.getUser().getId().equals(currentUser.getId())) {
+                throw new CustomException(UserException.FORBIDDEN_ACCESS);
+            }
+        }
+
+
+
+        return null;
     }
 }

@@ -1,5 +1,6 @@
 package org.groupware.ilchin.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.Response;
 import org.groupware.ilchin.dto.SearchPageResponse;
@@ -19,7 +20,7 @@ public class DepartmentController {
 
     @Auth
     @PostMapping
-    public Response<DepartmentResp> createDepartment(@RequestBody CreateReq createReq) {
+    public Response<DepartmentResp> createDepartment(@RequestBody @Valid CreateReq createReq) {
         return Api.success(200, "부서 생성 완료", departmentService.createDepartment(createReq));
     }
 
@@ -37,6 +38,12 @@ public class DepartmentController {
     @GetMapping({"{id}"})
     public Response<DepartmentResp> getDepartment(@PathVariable Long id) {
         return Api.success(200, "부서 조회 완료", departmentService.getDepartment(id));
+    }
+
+    @Auth
+    @PatchMapping({"id"})
+    public Response<DepartmentResp> updateDepartment(@PathVariable Long id, @RequestBody CreateReq createReq) {
+        return Api.success(200, "부서 수정 완료", departmentService.updateDepartment(id, createReq));
     }
 
 }

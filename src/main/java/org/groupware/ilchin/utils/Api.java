@@ -24,6 +24,14 @@ public class Api {
         return new Response<>(message, code.value(), null);
     }
 
+    public static <T> Response<T> error(Integer code, String message, T data) {
+        return new Response<>(message, code, data);
+    }
+
+    public static <T> Response<T> error(HttpStatus code, String message, T data) {
+        return new Response<>(message, code.value(), data);
+    }
+
     public static boolean areFieldsNotNullOrEmpty(Object obj, String... fields) {
         try {
             for (String field : fields) {
