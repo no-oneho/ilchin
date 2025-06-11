@@ -13,7 +13,7 @@ import org.groupware.ilchin.dto.user.response.UserSearchResp;
 import org.groupware.ilchin.security.Auth;
 import org.groupware.ilchin.service.UserService;
 import org.springframework.web.bind.annotation.*;
-import utils.Api;
+import org.groupware.ilchin.utils.Api;
 
 @RestController
 @RequiredArgsConstructor

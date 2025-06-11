@@ -1,4 +1,4 @@
-package utils;
+package org.groupware.ilchin.utils;
 
 import org.springframework.http.HttpStatus;
 

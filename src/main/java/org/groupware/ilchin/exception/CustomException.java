@@ -1,7 +1,7 @@
 package org.groupware.ilchin.exception;
 
 import lombok.Getter;
-import utils.Error;
+import org.groupware.ilchin.utils.Error;
 
 @Getter
 public class CustomException extends RuntimeException{
