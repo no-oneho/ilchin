@@ -13,7 +13,6 @@ import org.groupware.ilchin.exception.CustomException;
 import org.groupware.ilchin.exception.DepartmentException;
 import org.groupware.ilchin.exception.UserException;
 import org.groupware.ilchin.repository.DepartmentRepository;
-import org.groupware.ilchin.repository.UserProfileRepository;
 import org.groupware.ilchin.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
