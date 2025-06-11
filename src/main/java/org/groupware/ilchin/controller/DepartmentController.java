@@ -44,7 +44,7 @@ public class DepartmentController {
 
     @Auth
     @PatchMapping({"{id}"})
-    public Response<DepartmentResp> updateDepartment(@PathVariable Long id, @RequestBody PatchReq patchReq) {
+    public Response<DepartmentResp> updateDepartment(@PathVariable Long id, @RequestBody @Valid PatchReq patchReq) {
         return Api.success(200, "부서 수정 완료", departmentService.updateDepartment(id, patchReq));
     }
 
