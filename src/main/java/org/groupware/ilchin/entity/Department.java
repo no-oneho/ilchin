@@ -34,7 +34,6 @@ public class Department {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @Builder
     public static Department create(CreateReq createReq, User user) {
         return Department.builder()
                 .name(createReq.name())
