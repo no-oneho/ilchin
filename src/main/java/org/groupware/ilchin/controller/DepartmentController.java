@@ -6,6 +6,7 @@ import org.groupware.ilchin.dto.Response;
 import org.groupware.ilchin.dto.SearchPageResponse;
 import org.groupware.ilchin.dto.department.request.CreateReq;
 import org.groupware.ilchin.dto.department.request.PatchReq;
+import org.groupware.ilchin.dto.department.request.UpdateManagerReq;
 import org.groupware.ilchin.dto.department.response.DepartmentResp;
 import org.groupware.ilchin.security.Auth;
 import org.groupware.ilchin.service.DepartmentService;
@@ -45,6 +46,18 @@ public class DepartmentController {
     @PatchMapping({"{id}"})
     public Response<DepartmentResp> updateDepartment(@PathVariable Long id, @RequestBody PatchReq patchReq) {
         return Api.success(200, "부서 수정 완료", departmentService.updateDepartment(id, patchReq));
+    }
+
+    @Auth
+    @PatchMapping("{id}/manager")
+    public Response<DepartmentResp> updateDepartmentManager(@PathVariable Long id, @RequestBody UpdateManagerReq updateManagerReq) {
+        return Api.success(200, "부서 매니저 변경 완료", departmentService.updateDepartmentManager(id, updateManagerReq));
+    }
+
+    @Auth
+    @DeleteMapping("{id}")
+    public Response<String> deleteDepartment(@PathVariable Long id) {
+        return Api.success(200, "부서 제거 완료", departmentService.deleteDepartment(id));
     }
 
 }

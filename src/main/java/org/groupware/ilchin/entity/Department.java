@@ -50,4 +50,12 @@ public class Department {
         this.description = patchReq.description();
     }
 
+    public void updateManager(User user) {
+        this.user = user;
+    }
+
+    public void deleteDepartment() {
+        this.isDeleted = true;
+    }
+
 }

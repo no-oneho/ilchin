@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.groupware.ilchin.dto.SearchPageResponse;
 import org.groupware.ilchin.dto.department.request.CreateReq;
 import org.groupware.ilchin.dto.department.request.PatchReq;
+import org.groupware.ilchin.dto.department.request.UpdateManagerReq;
 import org.groupware.ilchin.dto.department.response.DepartmentResp;
 import org.groupware.ilchin.entity.Department;
 import org.groupware.ilchin.entity.User;
@@ -79,5 +80,34 @@ public class DepartmentService {
         department.updateDepartment(patchReq);
 
         return DepartmentResp.entityToResp(departmentRepository.save(department));
+    }
+
+    @Transactional
+    public DepartmentResp updateDepartmentManager(Long id, UpdateManagerReq updateManagerReq) {
+        User currentUser = userUtils.getCurrentUser();
+        if (!currentUser.getRole().equals("ADMIN")) {
+            throw new CustomException(UserException.FORBIDDEN_ACCESS);
+        }
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new CustomException(DepartmentException.NOT_FOUND_DEPARTMENT));
+        User manager = userRepository.findById(updateManagerReq.managerId())
+                        .orElseThrow(() -> new CustomException(UserException.NOT_FOUND_USER));
+
+
+        department.updateManager(manager);
+        return DepartmentResp.entityToResp(departmentRepository.save(department));
+    }
+
+    @Transactional
+    public String deleteDepartment(Long id) {
+        User currentUser = userUtils.getCurrentUser();
+        if (!currentUser.getRole().equals("ADMIN")) {
+            throw new CustomException(UserException.FORBIDDEN_ACCESS);
+        }
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new CustomException(DepartmentException.NOT_FOUND_DEPARTMENT));
+        department.deleteDepartment();
+        departmentRepository.save(department);
+        return "부서 제거 완료";
     }
 }
